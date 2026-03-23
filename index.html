@@ -767,6 +767,7 @@
         Rate billing cycle shifted from June 1–May 31 to January 1–December 31 effective 2022 (Settled Formula Rate, Docket ER20-2054).
         The large 2025 increase (+$30.93/kW-yr, +20%) was driven by under-collection and load forecasting adjustments.
         Data for 2011 and pre-2010 years not yet compiled.
+        Real (2025 $) line uses BLS CPI-U annual averages; 2025 CPI estimated at 319.1, 2026 estimated at 321.5.
       </div>
     </div>
   </div>
@@ -1199,29 +1200,44 @@ charts['atrrBar'] = new Chart(document.getElementById('atrrBar'), {
 });
 
 // ── 4. HISTORICAL RNS LINE CHART ──
-const rnsYears  = ['Jun\'10','Jun\'12','Jun\'13','Jun\'14','Jun\'15','Jun\'16','Jun\'17','Jun\'18','Jun\'19','Jun\'20','Jun\'21','Jan\'22','Jan\'23','Jan\'24','Jan\'25','Jan\'26'];
-const rnsRates  = [64.83, 75.25, 85.32, 89.80, 98.70, 104.10, 111.96, 110.43, 111.94, 129.26, 140.98, 142.78, 141.64, 154.35, 185.28, 183.71];
+const rnsYears    = ['Jun\'10','Jun\'12','Jun\'13','Jun\'14','Jun\'15','Jun\'16','Jun\'17','Jun\'18','Jun\'19','Jun\'20','Jun\'21','Jan\'22','Jan\'23','Jan\'24','Jan\'25','Jan\'26'];
+const rnsRates    = [64.83, 75.25, 85.32, 89.80, 98.70, 104.10, 111.96, 110.43, 111.94, 129.26, 140.98, 142.78, 141.64, 154.35, 185.28, 183.71];
+// Real values in 2025 dollars. BLS CPI-U annual averages; 2025 estimated at 319.1, 2026 estimated at 321.5.
+const rnsRatesReal = [94.8, 104.6, 116.9, 121.0, 132.9, 138.4, 145.8, 140.3, 139.7, 159.4, 166.0, 155.7, 148.3, 156.8, 185.3, 182.3];
 
 charts['rnsHistory'] = new Chart(document.getElementById('rnsHistory'), {
   type: 'line',
   data: {
     labels: rnsYears,
-    datasets: [{
-      label: 'RNS Rate ($/kW-yr)',
-      data: rnsRates,
-      borderColor: '#1a5fa8',
-      backgroundColor: 'rgba(26,95,168,0.1)',
-      fill: true,
-      tension: 0.3,
-      pointRadius: 5,
-      pointHoverRadius: 7,
-    }]
+    datasets: [
+      {
+        label: 'Nominal',
+        data: rnsRates,
+        borderColor: '#1a5fa8',
+        backgroundColor: 'rgba(26,95,168,0.1)',
+        fill: true,
+        tension: 0.3,
+        pointRadius: 5,
+        pointHoverRadius: 7,
+      },
+      {
+        label: 'Real (2025 $)',
+        data: rnsRatesReal,
+        borderColor: '#c0392b',
+        backgroundColor: 'transparent',
+        borderDash: [6, 4],
+        fill: false,
+        tension: 0.3,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+      }
+    ]
   },
   options: {
     maintainAspectRatio: false,
     plugins: {
-      legend: { display: false },
-      tooltip: { callbacks: { label: ctx => ` $${ctx.parsed.y.toFixed(2)}/kW-yr` } }
+      legend: { display: true, labels: { font: { size: 11 }, boxWidth: 28, padding: 12 } },
+      tooltip: { callbacks: { label: ctx => ` ${ctx.dataset.label}: $${ctx.parsed.y.toFixed(2)}/kW-yr` } }
     },
     scales: {
       y: {
