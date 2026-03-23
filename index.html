@@ -1,0 +1,1287 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ISO-NE Transmission Owner Reference Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body {
+    font-family: "Segoe UI", Arial, sans-serif;
+    font-size: 14px;
+    color: #222;
+    background: #f4f6f9;
+  }
+  header {
+    background: #1a3a5c;
+    color: #fff;
+    padding: 18px 32px 14px;
+    border-bottom: 4px solid #2e7bc4;
+  }
+  header h1 { font-size: 1.45em; font-weight: 700; letter-spacing: 0.01em; }
+  header .meta { font-size: 0.82em; color: #b8cfe0; margin-top: 5px; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 24px 24px 48px; }
+  h2 {
+    font-size: 1.05em;
+    font-weight: 700;
+    color: #1a3a5c;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    border-bottom: 2px solid #2e7bc4;
+    padding-bottom: 5px;
+    margin: 32px 0 14px;
+  }
+  h3 { font-size: 0.95em; font-weight: 600; color: #333; margin-bottom: 8px; }
+
+  /* Callout boxes */
+  .callouts { display: flex; gap: 16px; flex-wrap: wrap; margin-bottom: 8px; }
+  .callout {
+    background: #fff;
+    border: 1px solid #d0dce8;
+    border-top: 4px solid #2e7bc4;
+    border-radius: 4px;
+    padding: 14px 20px;
+    flex: 1;
+    min-width: 160px;
+  }
+  .callout .label { font-size: 0.75em; color: #666; text-transform: uppercase; letter-spacing: 0.05em; }
+  .callout .value { font-size: 1.55em; font-weight: 700; color: #1a3a5c; margin: 4px 0 2px; }
+  .callout .sub { font-size: 0.78em; color: #555; }
+
+  /* Tables */
+  .tbl-wrap { overflow-x: auto; }
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    background: #fff;
+    font-size: 0.88em;
+  }
+  thead th {
+    background: #1a3a5c;
+    color: #fff;
+    padding: 8px 10px;
+    text-align: left;
+    font-weight: 600;
+    white-space: nowrap;
+  }
+  thead th.r { text-align: right; }
+  tbody tr:nth-child(even) { background: #f0f4f8; }
+  tbody tr:hover { background: #ddeeff; }
+  td { padding: 7px 10px; border-bottom: 1px solid #dce4ed; vertical-align: top; }
+  td.r { text-align: right; }
+  td.bold { font-weight: 700; }
+  td.pending { color: #999; font-style: italic; }
+  td.sub { padding-left: 26px; }
+  tfoot tr { background: #e8eef5 !important; font-weight: 700; border-top: 2px solid #2e7bc4; }
+  tfoot td { border-bottom: none; }
+
+  /* Grid layouts */
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; align-items: start; }
+  .three-col { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 900px) {
+    .two-col, .three-col { grid-template-columns: 1fr; }
+  }
+
+  /* Chart containers */
+  .chart-box {
+    background: #fff;
+    border: 1px solid #d0dce8;
+    border-radius: 4px;
+    padding: 16px;
+  }
+
+  /* Detail cards */
+  details {
+    background: #fff;
+    border: 1px solid #d0dce8;
+    border-radius: 4px;
+    margin-bottom: 10px;
+  }
+  summary {
+    padding: 12px 16px;
+    cursor: pointer;
+    font-weight: 600;
+    color: #1a3a5c;
+    list-style: none;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  summary::-webkit-details-marker { display: none; }
+  summary::before { content: "▶"; font-size: 0.75em; color: #2e7bc4; transition: transform 0.15s; }
+  details[open] summary::before { transform: rotate(90deg); }
+  .card-body { padding: 0 16px 16px; }
+  .card-body table { font-size: 0.85em; }
+  .to-badge {
+    display: inline-block;
+    background: #2e7bc4;
+    color: #fff;
+    border-radius: 3px;
+    padding: 2px 8px;
+    font-size: 0.78em;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  /* Note/disclaimer */
+  .note {
+    background: #fff8e8;
+    border-left: 4px solid #c07020;
+    padding: 10px 14px;
+    font-size: 0.83em;
+    color: #555;
+    margin: 12px 0;
+    border-radius: 0 4px 4px 0;
+  }
+  .info-note {
+    background: #e8f4ff;
+    border-left: 4px solid #2e7bc4;
+    padding: 10px 14px;
+    font-size: 0.83em;
+    color: #333;
+    margin: 12px 0;
+    border-radius: 0 4px 4px 0;
+  }
+
+  /* Footnotes */
+  .footnotes {
+    margin-top: 40px;
+    padding-top: 16px;
+    border-top: 1px solid #ccc;
+    font-size: 0.78em;
+    color: #555;
+  }
+  .footnotes h4 { color: #333; margin-bottom: 8px; }
+  .footnotes ol { padding-left: 20px; }
+  .footnotes li { margin-bottom: 4px; }
+  sup { font-size: 0.75em; color: #2e7bc4; }
+
+  /* Tab navigation */
+  .tab-bar {
+    background: #143059;
+    padding: 0 32px;
+    display: flex;
+    gap: 2px;
+  }
+  .tab-btn {
+    background: transparent;
+    border: none;
+    border-bottom: 3px solid transparent;
+    color: #b8cfe0;
+    padding: 11px 22px;
+    font-size: 0.88em;
+    font-weight: 600;
+    cursor: pointer;
+    letter-spacing: 0.03em;
+    font-family: inherit;
+    transition: color 0.15s, border-color 0.15s;
+  }
+  .tab-btn:hover { color: #fff; }
+  .tab-btn.active { color: #fff; border-bottom-color: #2e7bc4; }
+</style>
+</head>
+<body>
+
+<header>
+  <h1>ISO-NE Transmission Owner Ratebase &amp; ROE Reference</h1>
+  <div class="meta">
+    Maine PUC Staff Reference &nbsp;|&nbsp;
+    RNS ATRR: Effective 1/1/2026 (based on 2024 actuals + 2025–2026 forecast) &nbsp;|&nbsp;
+    PTF Plant: as of 12/31/2024 &nbsp;|&nbsp;
+    ROE: Base 10.57%; reduced to 9.57% by FERC March 2026 order (EL11-66 et al.) &nbsp;|&nbsp;
+    LNS / Schedule 12C: Extracted from PTO AC Annual Informational Update (Docket ER20-2054, filed 7/31/2025)
+  </div>
+</header>
+
+<nav class="tab-bar">
+  <button class="tab-btn active" data-tab="tab-overview" onclick="showTab('tab-overview')">Overview &amp; Ratebase</button>
+  <button class="tab-btn" data-tab="tab-atrr" onclick="showTab('tab-atrr')">ATRR &amp; PTF</button>
+  <button class="tab-btn" data-tab="tab-detail" onclick="showTab('tab-detail')">TO Detail Cards</button>
+</nav>
+
+<div class="container">
+
+<!-- ==============================
+     TAB 1: OVERVIEW & RATEBASE
+     ============================== -->
+<div class="tab-panel" id="tab-overview">
+
+  <h2>Regional Overview</h2>
+
+  <div class="callouts">
+    <div class="callout">
+      <div class="label">Regional RNS ATRR (1/1/2026)</div>
+      <div class="value">$3.33B</div>
+      <div class="sub">All PTOs combined</div>
+    </div>
+    <div class="callout">
+      <div class="label">6-TO Subtotal (RNS ATRR)</div>
+      <div class="value">$3.24B</div>
+      <div class="sub">97.3% of regional total</div>
+    </div>
+    <div class="callout">
+      <div class="label">Regional PTF Plant in Service</div>
+      <div class="value">$22.6B</div>
+      <div class="sub">As of 12/31/2024 (all PTOs)</div>
+    </div>
+    <div class="callout">
+      <div class="label">RNS Rate (1/1/2026)</div>
+      <div class="value">$183.71</div>
+      <div class="sub">$/kW-yr &nbsp;(was $185.28 in 2025)</div>
+    </div>
+    <div class="callout">
+      <div class="label">Base ROE (all ISO-NE TOs)</div>
+      <div class="value">10.57%</div>
+      <div class="sub">+0.50% RTO = 11.07% all-in base &nbsp;<sup>[4]</sup></div>
+    </div>
+  </div>
+
+  <div class="two-col" style="margin-top:16px;">
+    <div class="chart-box">
+      <h3>Share of Regional RNS ATRR — 1/1/2026</h3>
+      <div style="position:relative; height:320px;">
+        <canvas id="pieChart"></canvas>
+      </div>
+    </div>
+    <div class="chart-box">
+      <h3>PTF Plant in Service by Entity — 12/31/2024 ($B)</h3>
+      <div style="position:relative; height:320px;">
+        <canvas id="plantBar"></canvas>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:20px; margin-bottom:8px;">Summary Comparison — 6 Transmission Owners</h3>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Transmission Owner</th>
+          <th class="r">RNS ATRR<br>1/1/2025 ($M)</th>
+          <th class="r">RNS ATRR<br>1/1/2026 ($M)</th>
+          <th class="r">Chg ($M)</th>
+          <th class="r">% of Regional<br>Total (2026)</th>
+          <th class="r">PTF Plant<br>12/31/2024 ($B)</th>
+          <th class="r">Carrying<br>Charge</th>
+          <th class="r">Base ROE<br>+ RTO</th>
+          <th>LNS ATRR</th>
+          <th>Sched 12C</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Eversource -->
+        <tr>
+          <td class="bold">Eversource Energy (total)<sup>[1]</sup></td>
+          <td class="r">$1,951.6</td>
+          <td class="r">$1,952.9</td>
+          <td class="r">+$1.3</td>
+          <td class="r">58.6%</td>
+          <td class="r">$13.21</td>
+          <td class="r">varies<sup>[2]</sup></td>
+          <td class="r">11.07%</td>
+          <td class="r">$366.1M</td>
+          <td class="r">$35.2M</td>
+        </tr>
+        <tr>
+          <td class="sub">— CL&amp;P (CT)</td>
+          <td class="r">$847.0</td>
+          <td class="r">$847.9</td>
+          <td class="r">+$0.9</td>
+          <td class="r">25.5%</td>
+          <td class="r" style="color:#888;">—</td>
+          <td class="r">13.68%</td>
+          <td class="r">11.07%</td>
+          <td class="r">$100.6M</td>
+          <td class="r">$33.8M</td>
+        </tr>
+        <tr>
+          <td class="sub">— NSTAR East (MA)</td>
+          <td class="r">$450.4</td>
+          <td class="r">$466.4</td>
+          <td class="r">+$16.0</td>
+          <td class="r">14.0%</td>
+          <td class="r" style="color:#888;">—</td>
+          <td class="r">13.30%</td>
+          <td class="r">11.07%</td>
+          <td class="r">$146.5M</td>
+          <td class="r">—</td>
+        </tr>
+        <tr>
+          <td class="sub">— NSTAR West (MA)</td>
+          <td class="r">$227.7</td>
+          <td class="r">$232.1</td>
+          <td class="r">+$4.4</td>
+          <td class="r">7.0%</td>
+          <td class="r" style="color:#888;">—</td>
+          <td class="r">13.91%</td>
+          <td class="r">11.07%</td>
+          <td class="r">$55.0M</td>
+          <td class="r">$1.4M</td>
+        </tr>
+        <tr>
+          <td class="sub">— PSNH (NH)</td>
+          <td class="r">$426.5</td>
+          <td class="r">$406.5</td>
+          <td class="r">−$20.0</td>
+          <td class="r">12.2%</td>
+          <td class="r" style="color:#888;">—</td>
+          <td class="r">16.51%</td>
+          <td class="r">11.07%</td>
+          <td class="r">$64.0M</td>
+          <td class="r">—</td>
+        </tr>
+
+        <!-- National Grid -->
+        <tr>
+          <td class="bold">National Grid (New England Power Co.)</td>
+          <td class="r">$485.4</td>
+          <td class="r">$500.8</td>
+          <td class="r">+$15.4</td>
+          <td class="r">15.0%</td>
+          <td class="r">$3.05</td>
+          <td class="r">14.86%</td>
+          <td class="r">11.07%</td>
+          <td class="r">$157.5M</td>
+          <td class="r">—</td>
+        </tr>
+
+        <!-- Avangrid -->
+        <tr>
+          <td class="bold">Avangrid (total — CMP + UI)<sup>[3]</sup></td>
+          <td class="r">$410.7</td>
+          <td class="r">$405.9</td>
+          <td class="r">−$4.8</td>
+          <td class="r">12.2%</td>
+          <td class="r">~$3.26</td>
+          <td class="r">varies</td>
+          <td class="r">11.07%</td>
+          <td class="r">$179.8M</td>
+          <td class="r">$7.5M</td>
+        </tr>
+        <tr>
+          <td class="sub">— Central Maine Power (CMP)</td>
+          <td class="r">$234.8</td>
+          <td class="r">$220.9</td>
+          <td class="r">−$13.9</td>
+          <td class="r">6.6%</td>
+          <td class="r">~$1.78</td>
+          <td class="r">10.46%</td>
+          <td class="r">11.07%</td>
+          <td class="r">$151.4M</td>
+          <td class="r">—</td>
+        </tr>
+        <tr>
+          <td class="sub">— United Illuminating (UI)</td>
+          <td class="r">$175.9</td>
+          <td class="r">$185.0</td>
+          <td class="r">+$9.1</td>
+          <td class="r">5.6%</td>
+          <td class="r">~$1.49</td>
+          <td class="r">14.33%</td>
+          <td class="r">11.07%</td>
+          <td class="r">$28.4M</td>
+          <td class="r">$7.5M</td>
+        </tr>
+
+        <!-- VELCO -->
+        <tr>
+          <td class="bold">Vermont Transco LLC (VELCO)</td>
+          <td class="r">$207.9</td>
+          <td class="r">$210.0</td>
+          <td class="r">+$2.1</td>
+          <td class="r">6.3%</td>
+          <td class="r">$1.24</td>
+          <td class="r">16.43%</td>
+          <td class="r">11.74%<sup>†</sup></td>
+          <td class="r">$42.1M</td>
+          <td class="r">—</td>
+        </tr>
+
+        <!-- RIE -->
+        <tr>
+          <td class="bold">Narragansett Elec. d/b/a RI Energy (RIE)</td>
+          <td class="r">$131.9</td>
+          <td class="r">$135.3</td>
+          <td class="r">+$3.4</td>
+          <td class="r">4.1%</td>
+          <td class="r">$0.95</td>
+          <td class="r">12.89%</td>
+          <td class="r">11.07%</td>
+          <td class="r">$52.3M</td>
+          <td class="r">—</td>
+        </tr>
+
+        <!-- Versant -->
+        <tr>
+          <td class="bold">Versant Power</td>
+          <td class="r">$44.8</td>
+          <td class="r">$36.7</td>
+          <td class="r">−$8.1</td>
+          <td class="r">1.1%</td>
+          <td class="r">$0.37</td>
+          <td class="r">11.15%</td>
+          <td class="r">11.07%</td>
+          <td class="r">$34.7M</td>
+          <td class="r">—</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>6-TO Subtotal</td>
+          <td class="r">$3,232.3</td>
+          <td class="r">$3,241.6</td>
+          <td class="r">+$9.3</td>
+          <td class="r">97.3%</td>
+          <td class="r">—</td>
+          <td class="r">—</td>
+          <td class="r">—</td>
+          <td></td>
+          <td></td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="note">
+    <strong>Notes:</strong>
+    Eversource PTF plant ($13.21B) is not broken out by subsidiary in the source data.
+    Avangrid PTF plant ($3.4B total group including MEPCO est. ~$0.14B) estimated split: CMP ~$1.78B, UI ~$1.49B using ATRR proportions as proxy.
+    Base ROE shown (10.57%) was operative prior to FERC's March 2026 order; the order reduced it to 9.57% with refund obligations.<sup>[4]</sup>
+    <strong>†</strong> VELCO ROE = 11.74% per ATT VT-1 (Vermont state-regulated; not subject to the standard ISO-NE formula rate ROE).
+    <br><strong>6-TO subtotal = 97.3% of regional total.</strong>
+    The remaining 2.7% ($89.6M) is split among five smaller filers excluded from this table:
+    NH Transmission/NHT ($26.9M), All Other PTOs ($26.6M), MEPCO ($17.4M, an Avangrid entity that files ATRR separately), CTMEEC ($14.3M), and MMWEC ($4.4M).
+  </div>
+
+
+  <!-- ==============================
+       RATEBASE & CAPITAL STRUCTURE
+       ============================== -->
+  <h2>Ratebase &amp; Capital Structure by Transmission Owner</h2>
+  <p style="margin-bottom:10px; font-size:0.87em; color:#444;">
+    Data from PTO AC Annual Informational Update (Docket ER20-2054, filed 7/31/2025), Attachment F — for costs in calendar year 2024.
+    "Inv. Base" = WS 1 Line 13 Total Transmission Investment Base (net plant + working capital, 5-quarter average). Covers all services (RNS + LNS + Sched 12C combined).<sup>[6]</sup>
+  </p>
+  <div class="tbl-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>Transmission Owner</th>
+          <th class="r">Total ATRR<br>2024-Based ($M)</th>
+          <th class="r">Total Inv. Base<br>(Ratebase, $M)</th>
+          <th class="r">RNS ATRR<br>($M)</th>
+          <th class="r">LNS ATRR<br>($M)</th>
+          <th class="r">Sched 12C<br>ATRR ($M)</th>
+          <th class="r">Debt %</th>
+          <th class="r">Equity %</th>
+          <th class="r">Base ROE</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Eversource -->
+        <tr>
+          <td class="bold">Eversource Energy (total)</td>
+          <td class="r bold">2,355.0</td>
+          <td class="r bold">10,261.5</td>
+          <td class="r bold">1,952.9</td>
+          <td class="r bold">366.1</td>
+          <td class="r bold">35.2</td>
+          <td class="r" style="color:#888;">varies</td>
+          <td class="r" style="color:#888;">varies</td>
+          <td class="r">10.57%</td>
+        </tr>
+        <tr>
+          <td class="sub">— CL&amp;P (CT)</td>
+          <td class="r">982.3</td>
+          <td class="r">4,271.4</td>
+          <td class="r">847.9</td>
+          <td class="r">100.6</td>
+          <td class="r">33.8</td>
+          <td class="r">43.33%</td>
+          <td class="r">55.68%</td>
+          <td class="r">10.57%</td>
+        </tr>
+        <tr>
+          <td class="sub">— NSTAR East (MA)</td>
+          <td class="r">613.0</td>
+          <td class="r">2,656.4</td>
+          <td class="r">466.4</td>
+          <td class="r">146.5</td>
+          <td class="r">—</td>
+          <td class="r">42.17%</td>
+          <td class="r">57.36%</td>
+          <td class="r">10.57%</td>
+        </tr>
+        <tr>
+          <td class="sub">— NSTAR West (MA)</td>
+          <td class="r">288.4</td>
+          <td class="r">1,328.8</td>
+          <td class="r">232.1</td>
+          <td class="r">55.0</td>
+          <td class="r">1.4</td>
+          <td class="r">42.58%</td>
+          <td class="r">57.42%</td>
+          <td class="r">10.57%</td>
+        </tr>
+        <tr>
+          <td class="sub">— PSNH (NH)</td>
+          <td class="r">471.3</td>
+          <td class="r">2,004.9</td>
+          <td class="r">406.5</td>
+          <td class="r">64.0</td>
+          <td class="r">—</td>
+          <td class="r">39.06%</td>
+          <td class="r">60.94%</td>
+          <td class="r">10.57%</td>
+        </tr>
+        <!-- National Grid -->
+        <tr>
+          <td class="bold">National Grid (New England Power Co.)</td>
+          <td class="r">658.3</td>
+          <td class="r">2,354.1</td>
+          <td class="r">500.8</td>
+          <td class="r">157.5</td>
+          <td class="r">—</td>
+          <td class="r">39.77%</td>
+          <td class="r">60.18%</td>
+          <td class="r">10.57%</td>
+        </tr>
+        <!-- Avangrid -->
+        <tr>
+          <td class="bold">Avangrid (total — CMP + UI)</td>
+          <td class="r bold">593.2</td>
+          <td class="r bold">2,265.3</td>
+          <td class="r bold">405.9</td>
+          <td class="r bold">179.8</td>
+          <td class="r bold">7.5</td>
+          <td class="r" style="color:#888;">varies</td>
+          <td class="r" style="color:#888;">varies</td>
+          <td class="r">10.57%</td>
+        </tr>
+        <tr>
+          <td class="sub">— Central Maine Power (CMP)</td>
+          <td class="r">372.3</td>
+          <td class="r">1,509.2</td>
+          <td class="r">220.9</td>
+          <td class="r">151.4</td>
+          <td class="r">—</td>
+          <td class="r">40.80%</td>
+          <td class="r">59.19%</td>
+          <td class="r">10.57%</td>
+        </tr>
+        <tr>
+          <td class="sub">— United Illuminating (UI)</td>
+          <td class="r">220.9</td>
+          <td class="r">756.1</td>
+          <td class="r">185.0</td>
+          <td class="r">28.4</td>
+          <td class="r">7.5</td>
+          <td class="r">42.24%</td>
+          <td class="r">57.76%</td>
+          <td class="r">10.57%</td>
+        </tr>
+        <!-- VELCO -->
+        <tr>
+          <td class="bold">Vermont Transco LLC (VELCO)</td>
+          <td class="r">251.9</td>
+          <td class="r">1,192.9</td>
+          <td class="r">210.0</td>
+          <td class="r">42.1</td>
+          <td class="r">—</td>
+          <td class="r">41.31%</td>
+          <td class="r">46.95%<sup>†</sup></td>
+          <td class="r">11.74%<sup>†</sup></td>
+        </tr>
+        <!-- RIE -->
+        <tr>
+          <td class="bold">Narragansett Elec. d/b/a RI Energy (RIE)</td>
+          <td class="r">187.7</td>
+          <td class="r">923.3</td>
+          <td class="r">135.3</td>
+          <td class="r">52.3</td>
+          <td class="r">—</td>
+          <td class="r">43.23%</td>
+          <td class="r">56.77%</td>
+          <td class="r">10.57%</td>
+        </tr>
+        <!-- Versant -->
+        <tr>
+          <td class="bold">Versant Power</td>
+          <td class="r">71.4</td>
+          <td class="r">353.4</td>
+          <td class="r">36.7</td>
+          <td class="r">34.7</td>
+          <td class="r">—</td>
+          <td class="r">53.20%</td>
+          <td class="r">46.78%</td>
+          <td class="r">10.57%</td>
+        </tr>
+      </tbody>
+      <tfoot>
+        <tr>
+          <td>Total — individual filing entities (excl. parent group rows)</td>
+          <td class="r">4,319.5</td>
+          <td class="r">17,350.5</td>
+          <td class="r">3,241.6</td>
+          <td class="r">832.5</td>
+          <td class="r">44.1</td>
+          <td class="r">—</td>
+          <td class="r">—</td>
+          <td class="r">—</td>
+        </tr>
+      </tfoot>
+    </table>
+  </div>
+  <div class="note" style="margin-top:8px;">
+    <strong>†</strong> VELCO ROE = 11.74% per ATT VT-1 (Vermont state-regulated; not subject to standard ISO-NE formula rate ROE).
+    VELCO equity % + debt % do not sum to 100% — formula rate includes preferred stock / other capital components.
+    Versant Power has the highest debt ratio (53.2%) among all major TOs.<br>
+    <strong>CMP LNS ATRR note:</strong> Central Maine Power (CMP) has no third-party LNS customers and no Att 2 rate schedule, but its LNS ATRR ($151.4M) is recovered via native load under Appendix B Att 2 WS 1.<sup>[6]</sup>
+  </div>
+
+
+  <!-- ==============================
+       FOOTNOTES
+       ============================== -->
+  <div class="footnotes">
+    <h4>Sources &amp; Notes</h4>
+    <ol>
+      <li id="fn1">PTO AC RNS Rate Presentation, July 15, 2025 (NEPOOL RC/TC Summer Meeting).
+        Primary source for all 2025/2026 ATRR figures, PTF plant in service (12/31/2024), carrying charge factors, and historical RNS rates (2017–2026).
+        URL: <code>https://www.iso-ne.com/static-assets/documents/100025/a05.1_tc_ptoac_rns_rate_presentation.pdf</code></li>
+      <li id="fn2">Eversource PTF plant total ($13.21B as of 12/31/2024) not broken out by subsidiary in source data.</li>
+      <li id="fn3">Avangrid group PTF plant ($3.40B as of 12/31/2024 for CMP + UI + MEPCO). CMP and UI splits estimated using ATRR proportions as proxy; MEPCO est. ~$0.14B excluded. Treat as indicative only.</li>
+      <li id="fn4">FERC Order issued March 2026, Dockets EL11-66, EL14-12, EL15-45. Base ROE reduced from 10.57% to 9.57%; ROE cap increased from 11.74% to 12.09%. Standard RTO adder = 0.50% for all TOs. Refund period: Oct. 1, 2011 – Dec. 31, 2012. The 10.57% base ROE was operative through February 2026 and remains embedded in formula rates pending tariff compliance filings.</li>
+      <li id="fn5">Historical RNS rates (2010–2016): PTO AC Annual Informational Filings and PTO AC Annual Meeting Presentations (various years). Rate for 2011 not compiled. Rate for 2013 per PTO AC Annual Meeting Presentation (NEPOOL TC, July 2021 historical summary table); original 2013 informational filing (July 31, 2013) stated $86.95/kW-yr.</li>
+      <li id="fn6">PTO AC Annual Informational Update, filed 7/31/2025, Docket ER20-2054. Data source: Attachment 3, Appendix B per-TO filings — App B Att 2 (Local/LNS, WS 1 Line 9) and App B Att 3 (Sch 12C, WS 1 Line 8). Investment base from App A (ATRR), WS 1 Line 13. Capital structure (debt/equity) from WS 0 of App A for each TO. All figures reflect 2024 actuals used as base for 1/1/2026 rates.</li>
+    </ol>
+    <p style="margin-top:10px; font-style:italic;">
+      Data pending: project-specific ROE incentive adders per TO; historical RNS rates prior to 2010 and for 2011.
+    </p>
+  </div>
+
+</div><!-- /tab-overview -->
+
+
+<!-- ==============================
+     TAB 2: ATRR & PTF
+     ============================== -->
+<div class="tab-panel" id="tab-atrr" hidden>
+
+  <!-- ==============================
+       RNS ATRR DETAIL
+       ============================== -->
+  <h2>RNS Annual Transmission Revenue Requirements</h2>
+
+  <div class="two-col">
+    <div>
+      <h3>RNS ATRR by Entity — 1/1/2026 ($M)</h3>
+      <div class="chart-box">
+        <div style="position:relative; height:300px;">
+          <canvas id="atrrBar"></canvas>
+        </div>
+      </div>
+    </div>
+    <div>
+      <h3>Full Regional ATRR — All PTOs (1/1/2026)</h3>
+      <div class="tbl-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Entity</th>
+              <th class="r">2025 ($M)</th>
+              <th class="r">2026 ($M)</th>
+              <th class="r">Chg ($M)</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td class="bold">Eversource Energy (total)</td><td class="r bold">1,951.6</td><td class="r bold">1,952.9</td><td class="r bold">+1.3</td></tr>
+            <tr><td class="sub">— CL&amp;P (CT)</td><td class="r">847.0</td><td class="r">847.9</td><td class="r">+0.9</td></tr>
+            <tr><td class="sub">— NSTAR East (MA)</td><td class="r">450.4</td><td class="r">466.4</td><td class="r">+16.0</td></tr>
+            <tr><td class="sub">— NSTAR West (MA)</td><td class="r">227.7</td><td class="r">232.1</td><td class="r">+4.4</td></tr>
+            <tr><td class="sub">— PSNH (NH)</td><td class="r">426.5</td><td class="r">406.5</td><td class="r">−20.0</td></tr>
+            <tr><td class="bold">National Grid (New England Power Co.)</td><td class="r bold">485.4</td><td class="r bold">500.8</td><td class="r bold">+15.4</td></tr>
+            <tr><td class="bold">Avangrid (total — CMP + UI)</td><td class="r bold">410.7</td><td class="r bold">405.9</td><td class="r bold">−4.8</td></tr>
+            <tr><td class="sub">— Central Maine Power (CMP)</td><td class="r">234.8</td><td class="r">220.9</td><td class="r">−13.9</td></tr>
+            <tr><td class="sub">— United Illuminating (UI)</td><td class="r">175.9</td><td class="r">185.0</td><td class="r">+9.1</td></tr>
+            <tr><td class="bold">Vermont Transco LLC (VELCO)</td><td class="r bold">207.9</td><td class="r bold">210.0</td><td class="r bold">+2.1</td></tr>
+            <tr><td class="bold">Narragansett Elec. d/b/a RI Energy (RIE)</td><td class="r bold">131.9</td><td class="r bold">135.3</td><td class="r bold">+3.4</td></tr>
+            <tr><td class="bold">Versant Power</td><td class="r bold">44.8</td><td class="r bold">36.7</td><td class="r bold">−8.1</td></tr>
+            <tr style="border-top:1px solid #ccc;"><td>Maine Elec. Power Co. (MEPCO)</td><td class="r">21.4</td><td class="r">17.4</td><td class="r">−4.0</td></tr>
+            <tr><td>CT Transmission Municipal (CTMEEC)</td><td class="r">11.2</td><td class="r">14.3</td><td class="r">+3.1</td></tr>
+            <tr><td>MA Municipal Wholesale (MMWEC)</td><td class="r">5.2</td><td class="r">4.4</td><td class="r">−0.8</td></tr>
+            <tr><td>NH Transmission, LLC (NHT)</td><td class="r">28.4</td><td class="r">26.9</td><td class="r">−1.5</td></tr>
+            <tr><td>All Other PTOs</td><td class="r">20.4</td><td class="r">26.6</td><td class="r">+6.2</td></tr>
+          </tbody>
+          <tfoot>
+            <tr><td>GRAND TOTAL</td><td class="r">$3,318.9</td><td class="r">$3,331.2</td><td class="r">+$12.3</td></tr>
+          </tfoot>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <div class="note" style="margin-top:16px;">
+    Source: PTO AC RNS Rate Presentation, July 15, 2025 (NEPOOL RC/TC Summer Meeting).<sup>[1]</sup>
+    ATRR based on 2024 actuals plus 2025/2026 forecasts.
+  </div>
+
+
+  <!-- ==============================
+       HISTORICAL RNS RATES
+       ============================== -->
+  <h2>Historical RNS Rates</h2>
+  <div class="two-col">
+    <div class="chart-box">
+      <h3>RNS Rate ($/kW-yr) — 2010 to 2026</h3>
+      <div style="position:relative; height:300px;">
+        <canvas id="rnsHistory"></canvas>
+      </div>
+    </div>
+    <div class="tbl-wrap">
+      <table style="font-size:0.9em;">
+        <thead>
+          <tr><th>Effective Date</th><th class="r">Rate ($/kW-yr)</th><th class="r">Change</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>06/01/2010</td><td class="r">$64.83</td><td class="r">—</td></tr>
+          <tr><td><em>2011</em></td><td class="r" style="color:#aaa;font-style:italic;">n/a</td><td class="r" style="color:#aaa;">—</td></tr>
+          <tr><td>06/01/2012</td><td class="r">$75.25</td><td class="r">—</td></tr>
+          <tr><td>06/01/2013</td><td class="r">$85.32</td><td class="r">+$10.07</td></tr>
+          <tr><td>06/01/2014</td><td class="r">$89.80</td><td class="r">+$4.48</td></tr>
+          <tr><td>06/01/2015</td><td class="r">$98.70</td><td class="r">+$8.90</td></tr>
+          <tr><td>06/01/2016</td><td class="r">$104.10</td><td class="r">+$5.40</td></tr>
+          <tr><td>06/01/2017</td><td class="r">$111.96</td><td class="r">+$7.86</td></tr>
+          <tr><td>06/01/2018</td><td class="r">$110.43</td><td class="r">−$1.53</td></tr>
+          <tr><td>06/01/2019</td><td class="r">$111.94</td><td class="r">+$1.51</td></tr>
+          <tr><td>06/01/2020</td><td class="r">$129.26</td><td class="r">+$17.32</td></tr>
+          <tr><td>06/01/2021</td><td class="r">$140.98</td><td class="r">+$11.72</td></tr>
+          <tr><td>01/01/2022</td><td class="r">$142.78</td><td class="r">+$1.80</td></tr>
+          <tr><td>01/01/2023</td><td class="r">$141.64</td><td class="r">−$1.14</td></tr>
+          <tr><td>01/01/2024</td><td class="r">$154.35</td><td class="r">+$12.71</td></tr>
+          <tr><td>01/01/2025</td><td class="r">$185.28</td><td class="r">+$30.93</td></tr>
+          <tr><td>01/01/2026</td><td class="r">$183.71</td><td class="r">−$1.57</td></tr>
+        </tbody>
+      </table>
+      <div class="note" style="margin-top:8px;">
+        Rate billing cycle shifted from June 1–May 31 to January 1–December 31 effective 2022 (Settled Formula Rate, Docket ER20-2054).
+        The large 2025 increase (+$30.93/kW-yr, +20%) was driven by under-collection and load forecasting adjustments.
+        Data for 2011 and pre-2010 years not yet compiled.
+      </div>
+    </div>
+  </div>
+
+
+  <!-- ==============================
+       CARRYING CHARGES
+       ============================== -->
+  <h2>Carrying Charge Factors (2025/2026 Blended)</h2>
+  <p style="margin-bottom:10px; font-size:0.87em; color:#444;">
+    Reflects total allowed carrying costs on new regional PTF investment — equity return + debt cost + depreciation + taxes.
+    A higher factor means more annual cost per dollar of capital.<sup>[1]</sup>
+  </p>
+  <div class="two-col">
+    <div class="tbl-wrap">
+      <table>
+        <thead>
+          <tr><th>Transmission Owner / Entity</th><th class="r">Carrying Charge</th></tr>
+        </thead>
+        <tbody>
+          <tr><td class="bold">Central Maine Power (CMP)</td><td class="r">10.46%</td></tr>
+          <tr><td class="bold">Versant Power</td><td class="r">11.15%</td></tr>
+          <tr><td class="bold">Narragansett Elec. d/b/a RI Energy (RIE)</td><td class="r">12.89%</td></tr>
+          <tr><td class="bold">NSTAR East (MA)</td><td class="r">13.30%</td></tr>
+          <tr><td class="bold">CL&amp;P (CT)</td><td class="r">13.68%</td></tr>
+          <tr><td class="bold">NSTAR West (MA)</td><td class="r">13.91%</td></tr>
+          <tr><td class="bold">United Illuminating (UI)</td><td class="r">14.33%</td></tr>
+          <tr><td class="bold">National Grid (New England Power Co.)</td><td class="r">14.86%</td></tr>
+          <tr><td class="bold">Vermont Transco LLC (VELCO)</td><td class="r">16.43%</td></tr>
+          <tr><td class="bold">PSNH (NH)</td><td class="r">16.51%</td></tr>
+          <tr style="border-top:1px solid #ccc;"><td>MEPCO</td><td class="r">12.97%</td></tr>
+          <tr><td>MMWEC</td><td class="r">14.21%</td></tr>
+          <tr><td>NHT</td><td class="r">13.93%</td></tr>
+          <tr><td>CTMEEC</td><td class="r">17.90%</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="chart-box">
+      <h3>Carrying Charge Factor by Entity (sorted low to high)</h3>
+      <div style="position:relative; height:360px;">
+        <canvas id="ccChart"></canvas>
+      </div>
+    </div>
+  </div>
+
+</div><!-- /tab-atrr -->
+
+
+<!-- ==============================
+     TAB 3: TO DETAIL CARDS
+     ============================== -->
+<div class="tab-panel" id="tab-detail" hidden>
+
+  <h2>Per-TO Detail Cards</h2>
+
+  <!-- EVERSOURCE -->
+  <details open>
+    <summary><span class="to-badge">ES</span> Eversource Energy</summary>
+    <div class="card-body">
+      <div class="two-col">
+        <div>
+          <h3>RNS ATRR by Subsidiary</h3>
+          <table>
+            <thead><tr><th>Subsidiary</th><th class="r">2025 ($M)</th><th class="r">2026 ($M)</th><th class="r">Chg</th></tr></thead>
+            <tbody>
+              <tr><td>CL&amp;P (CT)</td><td class="r">$847.0</td><td class="r">$847.9</td><td class="r">+$0.9</td></tr>
+              <tr><td>NSTAR East (MA)</td><td class="r">$450.4</td><td class="r">$466.4</td><td class="r">+$16.0</td></tr>
+              <tr><td>NSTAR West (MA)</td><td class="r">$227.7</td><td class="r">$232.1</td><td class="r">+$4.4</td></tr>
+              <tr><td>PSNH (NH)</td><td class="r">$426.5</td><td class="r">$406.5</td><td class="r">−$20.0</td></tr>
+            </tbody>
+            <tfoot><tr><td>Total</td><td class="r">$1,951.6</td><td class="r">$1,952.9</td><td class="r">+$1.3</td></tr></tfoot>
+          </table>
+        </div>
+        <div>
+          <h3>Key Metrics</h3>
+          <table>
+            <tbody>
+              <tr><td>PTF Plant (12/31/2024)</td><td class="r bold">$13.21B</td></tr>
+              <tr><td>Share of Regional ATRR (2026)</td><td class="r">58.6%</td></tr>
+              <tr><td>Carrying Charge — CL&amp;P (CT)</td><td class="r">13.68%</td></tr>
+              <tr><td>Carrying Charge — NSTAR East (MA)</td><td class="r">13.30%</td></tr>
+              <tr><td>Carrying Charge — NSTAR West (MA)</td><td class="r">13.91%</td></tr>
+              <tr><td>Carrying Charge — PSNH (NH)</td><td class="r">16.51%</td></tr>
+              <tr><td>Base ROE (prior / post Mar-26)</td><td class="r">10.57% / 9.57%</td></tr>
+              <tr><td>All-in Base ROE (prior)</td><td class="r">11.07%</td></tr>
+              <tr><td>ROE Cap</td><td class="r">12.09%</td></tr>
+              <tr><td>LNS ATRR (total)</td><td class="r bold">$366.1M</td></tr>
+              <tr><td>Schedule 12C ATRR (total)</td><td class="r bold">$35.2M</td></tr>
+              <tr><td>Total Investment Base</td><td class="r bold">$10,261.5M</td></tr>
+              <tr><td>Capital Structure</td><td class="r">varies by sub (see Ratebase table)</td></tr>
+            </tbody>
+          </table>
+          <div class="note" style="margin-top:10px;">
+            PSNH ATRR declining (−$20M) reflects reduced PTF investment or carrying charge for NH.
+            NSTAR East growing (+$16M) reflects continued capital investment in eastern MA.
+            LNS ATRR is large relative to RNS — particularly NSTAR East ($146.5M LNS vs. $466.4M RNS = 31%) and CL&P ($100.6M LNS vs. $847.9M RNS = 12%).
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- NATIONAL GRID -->
+  <details open>
+    <summary><span class="to-badge">NG</span> National Grid (New England Power Co.)</summary>
+    <div class="card-body">
+      <div class="two-col">
+        <div>
+          <h3>RNS ATRR</h3>
+          <table>
+            <tbody>
+              <tr><td>2025 ATRR</td><td class="r bold">$485.4M</td></tr>
+              <tr><td>2026 ATRR</td><td class="r bold">$500.8M</td></tr>
+              <tr><td>Change</td><td class="r">+$15.4M (+3.2%)</td></tr>
+              <tr><td>Share of Regional ATRR (2026)</td><td class="r">15.0%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Key Metrics</h3>
+          <table>
+            <tbody>
+              <tr><td>PTF Plant (12/31/2024)</td><td class="r bold">$3.05B</td></tr>
+              <tr><td>Carrying Charge</td><td class="r">14.86%</td></tr>
+              <tr><td>Base ROE (prior / post Mar-26)</td><td class="r">10.57% / 9.57%</td></tr>
+              <tr><td>All-in Base ROE (prior)</td><td class="r">11.07%</td></tr>
+              <tr><td>ROE Cap</td><td class="r">12.09%</td></tr>
+              <tr><td>LNS ATRR</td><td class="r bold">$157.5M</td></tr>
+              <tr><td>Schedule 12C ATRR</td><td class="r">—</td></tr>
+              <tr><td>Total Investment Base</td><td class="r bold">$2,354.1M</td></tr>
+              <tr><td>Equity / Debt</td><td class="r">60.18% / 39.77%</td></tr>
+              <tr><td>Parent</td><td class="r">National Grid plc (UK)</td></tr>
+              <tr><td>Service territory</td><td class="r">MA, RI, NH, VT, ME (PTF)</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- AVANGRID -->
+  <details open>
+    <summary><span class="to-badge">AV</span> Avangrid (CMP + UI)</summary>
+    <div class="card-body">
+      <div class="two-col">
+        <div>
+          <h3>RNS ATRR by Subsidiary</h3>
+          <table>
+            <thead><tr><th>Subsidiary</th><th class="r">2025 ($M)</th><th class="r">2026 ($M)</th><th class="r">Chg</th></tr></thead>
+            <tbody>
+              <tr><td>Central Maine Power (CMP)</td><td class="r">$234.8</td><td class="r">$220.9</td><td class="r">−$13.9</td></tr>
+              <tr><td>United Illuminating (UI)</td><td class="r">$175.9</td><td class="r">$185.0</td><td class="r">+$9.1</td></tr>
+            </tbody>
+            <tfoot><tr><td>CMP + UI Total</td><td class="r">$410.7</td><td class="r">$405.9</td><td class="r">−$4.8</td></tr></tfoot>
+          </table>
+        </div>
+        <div>
+          <h3>Key Metrics</h3>
+          <table>
+            <tbody>
+              <tr><td>PTF Plant — CMP (approx.)</td><td class="r bold">~$1.78B<sup>[3]</sup></td></tr>
+              <tr><td>PTF Plant — UI (approx.)</td><td class="r bold">~$1.49B<sup>[3]</sup></td></tr>
+              <tr><td>Carrying Charge — CMP</td><td class="r">10.46%</td></tr>
+              <tr><td>Carrying Charge — UI</td><td class="r">14.33%</td></tr>
+              <tr><td>Base ROE (prior / post Mar-26)</td><td class="r">10.57% / 9.57%</td></tr>
+              <tr><td>All-in Base ROE (prior)</td><td class="r">11.07%</td></tr>
+              <tr><td>ROE Cap</td><td class="r">12.09%</td></tr>
+              <tr><td>CMP — LNS ATRR</td><td class="r bold">$151.4M</td></tr>
+              <tr><td>UI — LNS ATRR</td><td class="r bold">$28.4M</td></tr>
+              <tr><td>UI — Schedule 12C ATRR</td><td class="r bold">$7.5M</td></tr>
+              <tr><td>CMP — Inv. Base</td><td class="r">$1,509.2M</td></tr>
+              <tr><td>UI — Inv. Base</td><td class="r">$756.1M</td></tr>
+              <tr><td>CMP — Equity / Debt</td><td class="r">59.19% / 40.80%</td></tr>
+              <tr><td>UI — Equity / Debt</td><td class="r">57.76% / 42.24%</td></tr>
+              <tr><td>Parent</td><td class="r">Avangrid / Iberdrola (Spain)</td></tr>
+              <tr><td>Service territories</td><td class="r">Maine (CMP); Connecticut (UI)</td></tr>
+            </tbody>
+          </table>
+          <div class="note" style="margin-top:10px;">
+            Central Maine Power (CMP) has the lowest carrying charge (10.46%) of all major TOs, suggesting a favorable capital structure and tax position.
+            CMP ATRR declining (−$13.9M, −5.9%); UI growing (+$9.1M, +5.2%).
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- VELCO -->
+  <details open>
+    <summary><span class="to-badge">VT</span> Vermont Transco LLC (VELCO)</summary>
+    <div class="card-body">
+      <div class="two-col">
+        <div>
+          <h3>RNS ATRR</h3>
+          <table>
+            <tbody>
+              <tr><td>2025 ATRR</td><td class="r bold">$207.9M</td></tr>
+              <tr><td>2026 ATRR</td><td class="r bold">$210.0M</td></tr>
+              <tr><td>Change</td><td class="r">+$2.1M (+1.0%)</td></tr>
+              <tr><td>Share of Regional ATRR (2026)</td><td class="r">6.3%</td></tr>
+            </tbody>
+          </table>
+          <h3 style="margin-top:14px;">PTF Plant History ($M)</h3>
+          <table>
+            <tbody>
+              <tr><td>12/31/2022</td><td class="r">$1,188.7M</td></tr>
+              <tr><td>12/31/2023</td><td class="r">$1,219.1M</td></tr>
+              <tr><td>12/31/2024</td><td class="r bold">$1,241.0M</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Key Metrics</h3>
+          <table>
+            <tbody>
+              <tr><td>PTF Plant (12/31/2024)</td><td class="r bold">$1.24B</td></tr>
+              <tr><td>Carrying Charge</td><td class="r">16.43%</td></tr>
+              <tr><td>Base ROE (prior / post Mar-26)</td><td class="r">10.57% / 9.57%</td></tr>
+              <tr><td>All-in Base ROE (prior)</td><td class="r">11.07%</td></tr>
+              <tr><td>ROE Cap</td><td class="r">12.09%</td></tr>
+              <tr><td>LNS ATRR</td><td class="r bold">$42.1M</td></tr>
+              <tr><td>Schedule 12C ATRR</td><td class="r">—</td></tr>
+              <tr><td>Total Investment Base</td><td class="r bold">$1,192.9M</td></tr>
+              <tr><td>Equity / Debt</td><td class="r">46.95% / 41.31%†</td></tr>
+              <tr><td>Parent</td><td class="r">VELCO (Vermont Elec. Power Co.)</td></tr>
+              <tr><td>Service territory</td><td class="r">Vermont (statewide PTF)</td></tr>
+            </tbody>
+          </table>
+          <div class="note" style="margin-top:10px;">
+            VELCO has one of the highest carrying charge factors (16.43%), tied with PSNH and second only to CTMEEC (17.90%).
+            ATRR is growing modestly (+1.0%) and plant in service has increased steadily since 2022.
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- RIE -->
+  <details open>
+    <summary><span class="to-badge">RIE</span> Narragansett Elec. d/b/a RI Energy (RIE)</summary>
+    <div class="card-body">
+      <div class="two-col">
+        <div>
+          <h3>RNS ATRR</h3>
+          <table>
+            <tbody>
+              <tr><td>2025 ATRR</td><td class="r bold">$131.9M</td></tr>
+              <tr><td>2026 ATRR</td><td class="r bold">$135.3M</td></tr>
+              <tr><td>Change</td><td class="r">+$3.4M (+2.6%)</td></tr>
+              <tr><td>Share of Regional ATRR (2026)</td><td class="r">4.1%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Key Metrics</h3>
+          <table>
+            <tbody>
+              <tr><td>PTF Plant (12/31/2024)</td><td class="r bold">$0.95B</td></tr>
+              <tr><td>Carrying Charge</td><td class="r">12.89%</td></tr>
+              <tr><td>Base ROE (prior / post Mar-26)</td><td class="r">10.57% / 9.57%</td></tr>
+              <tr><td>All-in Base ROE (prior)</td><td class="r">11.07%</td></tr>
+              <tr><td>ROE Cap</td><td class="r">12.09%</td></tr>
+              <tr><td>LNS ATRR</td><td class="r bold">$52.3M</td></tr>
+              <tr><td>Schedule 12C ATRR</td><td class="r">—</td></tr>
+              <tr><td>Total Investment Base</td><td class="r bold">$923.3M</td></tr>
+              <tr><td>Equity / Debt</td><td class="r">56.77% / 43.23%</td></tr>
+              <tr><td>Parent</td><td class="r">PPL Corp (formerly Nat'l Grid RI)</td></tr>
+              <tr><td>Service territory</td><td class="r">Rhode Island</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </details>
+
+  <!-- VERSANT -->
+  <details open>
+    <summary><span class="to-badge">VP</span> Versant Power</summary>
+    <div class="card-body">
+      <div class="two-col">
+        <div>
+          <h3>RNS ATRR</h3>
+          <table>
+            <tbody>
+              <tr><td>2025 ATRR</td><td class="r bold">$44.8M</td></tr>
+              <tr><td>2026 ATRR</td><td class="r bold">$36.7M</td></tr>
+              <tr><td>Change</td><td class="r">−$8.1M (−18.1%)</td></tr>
+              <tr><td>Share of Regional ATRR (2026)</td><td class="r">1.1%</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div>
+          <h3>Key Metrics</h3>
+          <table>
+            <tbody>
+              <tr><td>PTF Plant (12/31/2024)</td><td class="r bold">$0.37B</td></tr>
+              <tr><td>Carrying Charge</td><td class="r">11.15%</td></tr>
+              <tr><td>Base ROE (prior / post Mar-26)</td><td class="r">10.57% / 9.57%</td></tr>
+              <tr><td>All-in Base ROE (prior)</td><td class="r">11.07%</td></tr>
+              <tr><td>ROE Cap</td><td class="r">12.09%</td></tr>
+              <tr><td>LNS ATRR</td><td class="r bold">$34.7M</td></tr>
+              <tr><td>Schedule 12C ATRR</td><td class="r">—</td></tr>
+              <tr><td>Total Investment Base</td><td class="r bold">$353.4M</td></tr>
+              <tr><td>Equity / Debt</td><td class="r">46.78% / 53.20%</td></tr>
+              <tr><td>Formerly</td><td class="r">Emera Maine (acquired 2020)</td></tr>
+              <tr><td>Service territory</td><td class="r">Northern &amp; Eastern Maine (Bangor area)</td></tr>
+            </tbody>
+          </table>
+          <div class="note" style="margin-top:10px;">
+            Largest percentage ATRR decline among 7 TOs (−18.1%). Plant in service flat since 2022 ($370–374M range).
+            Highest debt ratio (53.2%) among all major TOs.
+          </div>
+        </div>
+      </div>
+    </div>
+  </details>
+
+</div><!-- /tab-detail -->
+
+</div><!-- /container -->
+
+<script>
+const C = {
+  ES:  '#1a5fa8',
+  NG:  '#c0392b',
+  CMP: '#d4820e',
+  UI:  '#e8a030',
+  VT:  '#27ae60',
+  RIE: '#8e44ad',
+  VP:  '#16a085',
+  OTH: '#95a5a6',
+};
+
+// ── Tab switching ──
+const charts = {};
+
+function showTab(id) {
+  document.querySelectorAll('.tab-panel').forEach(function(p) { p.hidden = true; });
+  document.querySelectorAll('.tab-btn').forEach(function(b) { b.classList.remove('active'); });
+  document.getElementById(id).hidden = false;
+  document.querySelector('[data-tab="' + id + '"]').classList.add('active');
+  var tabCharts = {
+    'tab-overview': ['pieChart', 'plantBar'],
+    'tab-atrr':     ['atrrBar', 'rnsHistory', 'ccChart'],
+    'tab-detail':   []
+  };
+  (tabCharts[id] || []).forEach(function(cid) { if (charts[cid]) charts[cid].resize(); });
+}
+
+// ── Helpers ──
+function pct(v, total) { return Math.round(v / total * 1000) / 10; }
+
+// ── 1. PIE — share of regional ATRR 2026 ──
+charts['pieChart'] = new Chart(document.getElementById('pieChart'), {
+  type: 'doughnut',
+  data: {
+    labels: ['Eversource','National Grid','CMP','UI','VELCO','RIE','Versant','Other PTOs'],
+    datasets: [{
+      data: [1952.9, 500.8, 220.9, 185.0, 210.0, 135.3, 36.7, 89.6],
+      backgroundColor: [C.ES, C.NG, C.CMP, C.UI, C.VT, C.RIE, C.VP, C.OTH],
+      borderWidth: 2, borderColor: '#fff',
+    }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right',
+        labels: { font: { size: 11 }, boxWidth: 13, padding: 10 }
+      },
+      tooltip: {
+        callbacks: {
+          label: ctx => ` ${ctx.label}: $${ctx.parsed.toFixed(1)}M (${pct(ctx.parsed, 3331.2)}%)`
+        }
+      }
+    },
+    cutout: '48%',
+    layout: { padding: 8 }
+  }
+});
+
+// ── 2. PTF PLANT bar (horizontal, in $B) ──
+charts['plantBar'] = new Chart(document.getElementById('plantBar'), {
+  type: 'bar',
+  data: {
+    labels: ['Eversource','Avangrid\n(CMP+UI+MEPCO)','National Grid','VELCO','RIE','Versant'],
+    datasets: [{
+      label: 'PTF Plant ($B)',
+      data: [13.21, 3.40, 3.05, 1.24, 0.95, 0.37],
+      backgroundColor: [C.ES, C.CMP, C.NG, C.VT, C.RIE, C.VP],
+      borderRadius: 3,
+    }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ` $${ctx.parsed.x.toFixed(2)}B` } }
+    },
+    scales: {
+      x: { ticks: { callback: v => '$' + v.toFixed(1) + 'B' }, title: { display: true, text: '$ Billions' } },
+      y: { ticks: { font: { size: 11 } } }
+    },
+    layout: { padding: { right: 10 } }
+  }
+});
+
+// ── 3. ATRR BAR — selected entities 2026 ──
+charts['atrrBar'] = new Chart(document.getElementById('atrrBar'), {
+  type: 'bar',
+  data: {
+    labels: ['CL&P (CT)','NSTAR E (MA)','Nat\'l Grid','PSNH (NH)','NSTAR W (MA)','CMP','VELCO','UI','RIE','Versant'],
+    datasets: [{
+      label: 'RNS ATRR 1/1/2026 ($M)',
+      data: [847.9, 466.4, 500.8, 406.5, 232.1, 220.9, 210.0, 185.0, 135.3, 36.7],
+      backgroundColor: [C.ES, C.ES, C.NG, C.ES, C.ES, C.CMP, C.VT, C.UI, C.RIE, C.VP],
+      borderRadius: 3,
+    }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    plugins: { legend: { display: false } },
+    scales: {
+      y: { ticks: { callback: v => '$' + v + 'M' }, title: { display: true, text: '$ Millions' } },
+      x: { ticks: { font: { size: 10 }, maxRotation: 30 } }
+    },
+    layout: { padding: { top: 10 } }
+  }
+});
+
+// ── 4. HISTORICAL RNS LINE CHART ──
+const rnsYears  = ['Jun\'10','Jun\'12','Jun\'13','Jun\'14','Jun\'15','Jun\'16','Jun\'17','Jun\'18','Jun\'19','Jun\'20','Jun\'21','Jan\'22','Jan\'23','Jan\'24','Jan\'25','Jan\'26'];
+const rnsRates  = [64.83, 75.25, 85.32, 89.80, 98.70, 104.10, 111.96, 110.43, 111.94, 129.26, 140.98, 142.78, 141.64, 154.35, 185.28, 183.71];
+
+charts['rnsHistory'] = new Chart(document.getElementById('rnsHistory'), {
+  type: 'line',
+  data: {
+    labels: rnsYears,
+    datasets: [{
+      label: 'RNS Rate ($/kW-yr)',
+      data: rnsRates,
+      borderColor: '#1a5fa8',
+      backgroundColor: 'rgba(26,95,168,0.1)',
+      fill: true,
+      tension: 0.3,
+      pointRadius: 5,
+      pointHoverRadius: 7,
+    }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    plugins: {
+      legend: { display: false },
+      tooltip: { callbacks: { label: ctx => ` $${ctx.parsed.y.toFixed(2)}/kW-yr` } }
+    },
+    scales: {
+      y: {
+        min: 50,
+        ticks: { callback: v => '$' + v.toFixed(0) },
+        title: { display: true, text: '$/kW-yr' }
+      },
+      x: { ticks: { font: { size: 10 } } }
+    },
+    layout: { padding: { top: 10 } }
+  }
+});
+
+// ── 5. CARRYING CHARGE horizontal bar ──
+const ccData = [
+  { label: 'CMP',            val: 10.46, color: C.CMP },
+  { label: 'Versant',        val: 11.15, color: C.VP  },
+  { label: 'RIE',            val: 12.89, color: C.RIE },
+  { label: 'MEPCO',          val: 12.97, color: C.OTH },
+  { label: 'NSTAR East',     val: 13.30, color: C.ES  },
+  { label: 'CL&P (CT)',      val: 13.68, color: C.ES  },
+  { label: 'NSTAR West',     val: 13.91, color: C.ES  },
+  { label: 'NHT',            val: 13.93, color: C.OTH },
+  { label: 'MMWEC',          val: 14.21, color: C.OTH },
+  { label: 'UI',             val: 14.33, color: C.UI  },
+  { label: 'Nat\'l Grid',    val: 14.86, color: C.NG  },
+  { label: 'VELCO',          val: 16.43, color: C.VT  },
+  { label: 'PSNH (NH)',      val: 16.51, color: C.ES  },
+  { label: 'CTMEEC',         val: 17.90, color: C.OTH },
+].sort((a,b) => a.val - b.val);
+
+charts['ccChart'] = new Chart(document.getElementById('ccChart'), {
+  type: 'bar',
+  data: {
+    labels: ccData.map(d => d.label),
+    datasets: [{
+      label: 'Carrying Charge (%)',
+      data: ccData.map(d => d.val),
+      backgroundColor: ccData.map(d => d.color),
+      borderRadius: 3,
+    }]
+  },
+  options: {
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: { legend: { display: false } },
+    scales: {
+      x: {
+        min: 9,
+        ticks: { callback: v => v + '%' },
+        title: { display: true, text: 'Carrying Charge Factor (%)' }
+      },
+      y: { ticks: { font: { size: 11 } } }
+    },
+    layout: { padding: { right: 10 } }
+  }
+});
+
+// Initialize to Tab 1
+showTab('tab-overview');
+</script>
+</body>
+</html>
