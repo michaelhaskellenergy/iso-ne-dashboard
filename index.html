@@ -209,7 +209,7 @@
 <header>
   <h1>ISO-NE Transmission Owner Ratebase &amp; ROE Reference</h1>
   <div class="meta">
-    Maine PUC Staff Reference &nbsp;|&nbsp;
+    ISO-NE &amp; New England Staff &amp; Stakeholder Reference &nbsp;|&nbsp;
     RNS ATRR: Effective 1/1/2026 (based on 2024 actuals + 2025–2026 forecast) &nbsp;|&nbsp;
     PTF Plant: as of 12/31/2024<br>
     ROE: Base 10.57%; reduced to 9.57% by FERC March 2026 order (EL11-66 et al.) &nbsp;|&nbsp;
@@ -221,6 +221,8 @@
   <button class="tab-btn active" data-tab="tab-overview" onclick="showTab('tab-overview')">Overview &amp; Ratebase</button>
   <button class="tab-btn" data-tab="tab-atrr" onclick="showTab('tab-atrr')">ATRR &amp; PTF</button>
   <button class="tab-btn" data-tab="tab-detail" onclick="showTab('tab-detail')">TO Detail Cards</button>
+  <button class="tab-btn" data-tab="tab-ratepayer" onclick="showTab('tab-ratepayer')">Ratepayer Impact</button>
+  <button class="tab-btn" data-tab="tab-invest" onclick="showTab('tab-invest')">Transmission Investment</button>
   <button class="tab-btn" data-tab="tab-glossary" onclick="showTab('tab-glossary')">Glossary</button>
 </nav>
 
@@ -1234,6 +1236,464 @@
 </div><!-- /tab-glossary -->
 
 
+<!-- ==============================
+     TAB 5: RATEPAYER IMPACT
+     ============================== -->
+<div class="tab-panel" id="tab-ratepayer" hidden>
+
+  <h2>Ratepayer Impact — Overview</h2>
+
+  <div class="note">
+    This tab translates ISO-NE wholesale transmission metrics into estimated retail impacts.
+    All figures are estimates based on modeled assumptions — actual retail allocation of
+    transmission costs depends on each state's rate design and utility tariff proceedings.
+    See methodology boxes for details.
+  </div>
+
+  <!-- Section 1: RNS ¢/kWh -->
+  <h2>Regional Network Service (RNS) Cost per kWh by Utility Territory</h2>
+  <p style="margin-bottom:10px; font-size:0.87em; color:#444;">
+    The 2026 RNS rate is $183.71/kW-yr — a wholesale charge applied to load-serving entities
+    based on their ISO-NE coincident peak contribution. This section estimates how that cost
+    translates to average cents per kWh for customers in each New England utility territory.
+  </p>
+
+  <div class="info-note">
+    <strong>Methodology:</strong>
+    <ol style="margin:4px 0 0 18px; padding:0; line-height:1.8;">
+      <li>Load Ratio Share (LRS) estimated from 2025 CELT 90/10 summer peak forecast by ISO-NE load zone (CELT sheet "6.2 Forecasts for Trans Pln," 2025 column). Regional total: 27,828 MW.</li>
+      <li>For zones with multiple retail utilities (CT: CL&amp;P + UI; ME: CMP + Versant), zone LRS split proportionally by each utility's 2024 residential kWh sales (EIA Form 861, 2024).</li>
+      <li>Annual RNS cost per utility = utility LRS × $3,241.6M (6-TO regional RNS ATRR, 2024-based; full regional total = $3,331.2M).</li>
+      <li>Total retail kWh estimated from EIA-861 residential sales using state residential fraction benchmarks (CT 35%, ME 43%, NH 37%, RI 38%). RNS ¢/kWh = annual RNS cost ÷ estimated total retail kWh.</li>
+      <li>Annual household cost assumes 600 kWh/month (7,200 kWh/yr, approximate New England residential average). Actual residential bills depend on each state's retail tariff rate design.</li>
+    </ol>
+  </div>
+
+  <div class="tbl-wrap" style="margin-top:14px;">
+  <table>
+    <thead>
+      <tr>
+        <th>Utility (Retail)</th>
+        <th class="r">State</th>
+        <th class="r">Zone</th>
+        <th class="r">Utility LRS<br>(est.)</th>
+        <th class="r">Annual RNS Cost<br>to Territory ($M)</th>
+        <th class="r">RNS ¢/kWh<br>(avg., est.)</th>
+        <th class="r">Ann. Cost per<br>Household (est.)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="bold">CL&amp;P (Eversource CT)</td>
+        <td class="r">CT</td><td class="r">CT</td>
+        <td class="r">20.1%</td>
+        <td class="r">$652.6M</td>
+        <td class="r bold">2.32 ¢</td>
+        <td class="r">~$167/yr</td>
+      </tr>
+      <tr>
+        <td class="bold">United Illuminating (Eversource CT)</td>
+        <td class="r">CT</td><td class="r">CT</td>
+        <td class="r">4.3%</td>
+        <td class="r">$139.4M</td>
+        <td class="r bold">2.32 ¢</td>
+        <td class="r">~$167/yr</td>
+      </tr>
+      <tr>
+        <td class="bold">Eversource MA (NSTAR Electric) <sup>†</sup></td>
+        <td class="r">MA</td><td class="r">NEMA/SEMA/WCMA</td>
+        <td class="r">~25–27%</td>
+        <td class="r">~$810–875M</td>
+        <td class="r bold">~3.5–3.8 ¢</td>
+        <td class="r">~$252–274/yr</td>
+      </tr>
+      <tr>
+        <td class="bold">PSNH (Eversource NH)</td>
+        <td class="r">NH</td><td class="r">NH</td>
+        <td class="r">9.6%</td>
+        <td class="r">$311.5M</td>
+        <td class="r bold">3.38 ¢</td>
+        <td class="r">~$243/yr</td>
+      </tr>
+      <tr>
+        <td class="bold">Central Maine Power (CMP)</td>
+        <td class="r">ME</td><td class="r">ME</td>
+        <td class="r">6.6%</td>
+        <td class="r">$212.6M</td>
+        <td class="r bold">2.36 ¢</td>
+        <td class="r">~$170/yr</td>
+      </tr>
+      <tr>
+        <td class="bold">RI Energy (Narragansett Electric)</td>
+        <td class="r">RI</td><td class="r">RI</td>
+        <td class="r">6.9%</td>
+        <td class="r">$223.7M</td>
+        <td class="r bold">2.81 ¢</td>
+        <td class="r">~$202/yr</td>
+      </tr>
+      <tr>
+        <td class="bold">Versant Power</td>
+        <td class="r">ME</td><td class="r">ME</td>
+        <td class="r">1.4%</td>
+        <td class="r">$45.7M</td>
+        <td class="r bold">2.36 ¢</td>
+        <td class="r">~$170/yr</td>
+      </tr>
+      <tr style="color:#777; font-style:italic;">
+        <td>VELCO territory (VT utilities)</td>
+        <td class="r">VT</td><td class="r">VT</td>
+        <td class="r">3.7%</td>
+        <td class="r">$118.3M</td>
+        <td class="r" colspan="2">Transmission-only entity — VT RNS costs flow through Vermont distribution utilities (primarily Green Mountain Power)</td>
+      </tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4">6-TO Regional RNS ATRR Total</td>
+        <td class="r">$3,241.6M</td>
+        <td class="r" colspan="2">Full regional (all PTOs): $3,331.2M</td>
+      </tr>
+    </tfoot>
+  </table>
+  </div>
+
+  <p class="note" style="margin-top:8px; font-size:0.82em;">
+    <sup>†</sup> <strong>Eversource MA:</strong> NSTAR Electric (Eversource MA) is the largest MA
+    distribution utility but shares the MA load zones with National Grid MA distribution. The full
+    MA zone LRS (47.4%) is split between them; Eversource MA's share is estimated at ~52–57%
+    based on customer counts. National Grid MA distribution is not shown separately.
+    <strong>CL&amp;P / UI note:</strong> Both serve the CT zone; their identical ¢/kWh reflects
+    the proportional-allocation methodology, not uniform rate design.
+    <strong>Data sources:</strong> LRS from 2025 CELT (C:\Users\micha\Downloads\2025_celt.xlsx,
+    sheet 6.2); residential kWh from EIA Form 861 (2024, released Oct. 2025).
+  </p>
+
+  <!-- Section 2: ROE Order Impact -->
+  <h2>Estimated Impact of March 2026 ROE Order</h2>
+  <p style="margin-bottom:10px; font-size:0.87em; color:#444;">
+    FERC's March 2026 order (EL11-66 et al.) reduces base ROE from 10.57% to 9.57% for all
+    ISO-NE formula-rate TOs — a 100-basis-point reduction applied to each TO's equity rate base.
+  </p>
+
+  <div class="callouts">
+    <div class="callout">
+      <div class="label">Total Regional Reduction (est.)</div>
+      <div class="value">~$93M/yr</div>
+      <div class="sub">All formula-rate TOs; excl. VELCO</div>
+    </div>
+    <div class="callout">
+      <div class="label">Flows to Regional RNS Pool</div>
+      <div class="value">~$73M/yr</div>
+      <div class="sub">Shared by all NE ratepayers via RNS rate</div>
+    </div>
+    <div class="callout">
+      <div class="label">Flows to Local Network Service</div>
+      <div class="value">~$20M/yr</div>
+      <div class="sub">Direct benefit by TO territory</div>
+    </div>
+    <div class="callout">
+      <div class="label">VELCO (excluded)</div>
+      <div class="value">~$5.6M/yr</div>
+      <div class="sub">Vermont-regulated ROE; not subject to EL11-66</div>
+    </div>
+  </div>
+
+  <div class="info-note" style="margin-top:12px;">
+    <strong>Methodology:</strong> Annual ATRR reduction per TO = Investment Base × Equity % × 1.00%
+    (100 bp ROE reduction). RNS portion of each reduction enters the regional pool (lowers RNS
+    rate for all New England LSEs); LNS portion is a direct reduction to that TO's local tariff.
+    <strong>These are forward-looking estimates</strong> — compliance tariff filings are pending
+    and are not yet reflected in current 2026 rates. Refund period (Oct. 2011 – Dec. 2012) creates
+    additional back-year obligations not estimated here. Investment Base and Equity % from
+    PTO AC Annual Informational Update, Docket ER20-2054, filed 7/31/2025.
+  </div>
+
+  <h3 style="margin-top:20px;">Annual ATRR Reduction by Transmission Owner</h3>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Transmission Owner</th>
+        <th class="r">Inv. Base ($M)</th>
+        <th class="r">Equity %</th>
+        <th class="r">Equity Base ($M)</th>
+        <th class="r">Annual Reduction<br>(est.)</th>
+        <th class="r">→ RNS Pool<br>(regional benefit)</th>
+        <th class="r">→ LNS<br>(local benefit)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>CL&amp;P (Eversource CT)</td><td class="r">4,271.4</td><td class="r">55.68%</td><td class="r">2,378</td><td class="r bold">~$23.8M</td><td class="r">$20.5M</td><td class="r">$3.3M</td></tr>
+      <tr><td>NSTAR East (Eversource MA)</td><td class="r">2,656.4</td><td class="r">57.36%</td><td class="r">1,524</td><td class="r bold">~$15.2M</td><td class="r">$11.6M</td><td class="r">$3.6M</td></tr>
+      <tr><td>NSTAR West (Eversource MA)</td><td class="r">1,328.8</td><td class="r">57.42%</td><td class="r">763</td><td class="r bold">~$7.6M</td><td class="r">$6.1M</td><td class="r">$1.5M</td></tr>
+      <tr><td>PSNH (Eversource NH)</td><td class="r">2,004.9</td><td class="r">60.94%</td><td class="r">1,222</td><td class="r bold">~$12.2M</td><td class="r">$10.5M</td><td class="r">$1.7M</td></tr>
+      <tr><td>National Grid (NEP)</td><td class="r">2,354.1</td><td class="r">60.18%</td><td class="r">1,417</td><td class="r bold">~$14.2M</td><td class="r">$10.8M</td><td class="r">$3.4M</td></tr>
+      <tr><td>Central Maine Power (CMP)</td><td class="r">1,509.2</td><td class="r">59.19%</td><td class="r">893</td><td class="r bold">~$8.9M</td><td class="r">$5.3M</td><td class="r">$3.6M</td></tr>
+      <tr><td>United Illuminating (UI)</td><td class="r">756.1</td><td class="r">57.76%</td><td class="r">437</td><td class="r bold">~$4.4M</td><td class="r">$3.7M</td><td class="r">$0.7M</td></tr>
+      <tr><td>RI Energy (RIE)</td><td class="r">923.3</td><td class="r">56.77%</td><td class="r">524</td><td class="r bold">~$5.2M</td><td class="r">$3.7M</td><td class="r">$1.5M</td></tr>
+      <tr><td>Versant Power</td><td class="r">353.4</td><td class="r">46.78%</td><td class="r">165</td><td class="r bold">~$1.7M</td><td class="r">$0.9M</td><td class="r">$0.8M</td></tr>
+    </tbody>
+    <tfoot>
+      <tr>
+        <td colspan="4">Total (non-VELCO formula-rate TOs)</td>
+        <td class="r bold">~$93.2M/yr</td>
+        <td class="r">~$73.1M</td>
+        <td class="r">~$20.1M</td>
+      </tr>
+    </tfoot>
+  </table>
+  </div>
+
+  <h3 style="margin-top:22px;">Estimated Net Savings per Retail Utility Territory</h3>
+  <p style="font-size:0.87em; color:#444; margin-bottom:10px;">
+    Each utility's customers benefit from (a) their LRS-proportional share of the $73.1M RNS pool
+    reduction plus (b) their own TO's LNS reduction. NEP's $3.4M LNS reduction benefits MA load
+    broadly and is not allocated to a single retail utility below.
+  </p>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Utility Territory</th>
+        <th class="r">RNS Savings<br>(LRS share of pool)</th>
+        <th class="r">LNS Savings<br>(own TO)</th>
+        <th class="r">Total Est.<br>Savings/yr</th>
+        <th class="r">Savings ¢/kWh<br>(avg., all classes)</th>
+        <th class="r">Household Annual<br>Savings (est.)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>CL&amp;P</td><td class="r">$14.7M</td><td class="r">$3.3M</td><td class="r bold">~$18.0M</td><td class="r bold">0.064 ¢</td><td class="r">~$4.60/yr</td></tr>
+      <tr><td>UI</td><td class="r">$3.1M</td><td class="r">$0.7M</td><td class="r bold">~$3.8M</td><td class="r bold">0.063 ¢</td><td class="r">~$4.54/yr</td></tr>
+      <tr><td>PSNH</td><td class="r">$7.0M</td><td class="r">$1.7M</td><td class="r bold">~$8.7M</td><td class="r bold">0.094 ¢</td><td class="r">~$6.77/yr</td></tr>
+      <tr><td>CMP</td><td class="r">$4.8M</td><td class="r">$3.6M</td><td class="r bold">~$8.4M</td><td class="r bold">0.094 ¢</td><td class="r">~$6.77/yr</td></tr>
+      <tr><td>Versant</td><td class="r">$1.0M</td><td class="r">$0.8M</td><td class="r bold">~$1.8M</td><td class="r bold">0.093 ¢</td><td class="r">~$6.70/yr</td></tr>
+      <tr><td>RI Energy</td><td class="r">$5.0M</td><td class="r">$1.5M</td><td class="r bold">~$6.5M</td><td class="r bold">0.082 ¢</td><td class="r">~$5.90/yr</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <p class="note" style="margin-top:8px;">
+    Savings are forward-looking pending compliance tariff filings; timing depends on each TO's
+    formula rate update cycle. Eversource MA combined NSTAR East + West savings ≈ $22.8M/yr
+    total ATRR reduction (shown in the table above; retail impact split between Eversource MA
+    territory and NEP LNS pool). All ¢/kWh estimates assume proportional allocation of costs
+    across all customer classes; residential bills may differ based on rate design.
+  </p>
+
+</div><!-- /tab-ratepayer -->
+
+
+<!-- ==============================
+     TAB 6: TRANSMISSION INVESTMENT
+     ============================== -->
+<div class="tab-panel" id="tab-invest" hidden>
+
+  <h2>Types of New England Transmission Investment</h2>
+  <p style="margin-bottom:10px; font-size:0.87em; color:#444;">
+    Not all transmission investment goes through the same planning or oversight process.
+    Understanding how projects are initiated, reviewed, and cost-allocated matters for
+    assessing whether rate increases are well-justified. This tab covers the major investment
+    categories tracked by ISO-NE and the emerging oversight framework for asset condition spending.
+  </p>
+
+  <div class="note">
+    This tab covers the two main investment pipelines published by ISO-NE: RSP reliability
+    projects and the Asset Condition List (ACL). Generator interconnection network upgrades
+    and Elective Transmission Upgrades (ETUs, Schedule 25) are addressed separately under
+    ISO-NE's OATT Schedules 22, 23, and 25 and are not included in these summaries.
+  </div>
+
+  <!-- Section 1: Taxonomy -->
+  <h2>Investment Categories and Oversight</h2>
+  <div class="tbl-wrap" style="margin-top:14px;">
+  <table>
+    <thead>
+      <tr>
+        <th>Category</th>
+        <th>Abbrev.</th>
+        <th>Who Initiates</th>
+        <th>Cost Allocation</th>
+        <th>Review Process</th>
+        <th>Current Scale</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="bold" style="border-left:4px solid #1a5fa8; padding-left:8px;">Reliability Upgrades</td>
+        <td>RTU</td>
+        <td>ISO-NE regional planning (NEPOOL Technical Committee)</td>
+        <td>Regionalized — shared by all NE ratepayers via RNS</td>
+        <td>ISO-NE reliability studies; NERC standard review; FERC filing required</td>
+        <td>5 major projects in pipeline (~2025–2033)</td>
+      </tr>
+      <tr>
+        <td class="bold" style="border-left:4px solid #c0392b; padding-left:8px;">Asset Condition</td>
+        <td>ACL</td>
+        <td>TO-initiated — replacement/upgrade of aging infrastructure</td>
+        <td>Regionalized — shared by all NE ratepayers via RNS</td>
+        <td>TO internal asset management; ISO-NE ACR advisory review under development</td>
+        <td>Largest active pipeline; accelerating</td>
+      </tr>
+      <tr>
+        <td class="bold" style="border-left:4px solid #27ae60; padding-left:8px;">Public Policy</td>
+        <td>PPTU</td>
+        <td>State/federal public policy mandate (e.g., offshore wind interconnection)</td>
+        <td>Regionally allocated; driving states may bear larger share</td>
+        <td>ISO-NE Public Policy Transmission Planning process; FERC filing</td>
+        <td>Growing category driven by state clean energy requirements</td>
+      </tr>
+      <tr>
+        <td class="bold" style="border-left:4px solid #8e44ad; padding-left:8px;">Elective (Developer)</td>
+        <td>ETU</td>
+        <td>Merchant developer or state-procured (e.g., NECEC/HVDC import lines)</td>
+        <td>Developer-funded (Schedule 25); generally not socialized regionally</td>
+        <td>ISO-NE interconnection study; bilateral contract; FERC filing</td>
+        <td>Project-specific; includes major clean energy import projects</td>
+      </tr>
+      <tr>
+        <td class="bold" style="border-left:4px solid #95a5a6; padding-left:8px;">Market Efficiency</td>
+        <td>METU</td>
+        <td>ISO-NE economic analysis</td>
+        <td>Regionally allocated based on beneficiary zones</td>
+        <td>Net annual benefit test (benefits must exceed costs); FERC filing</td>
+        <td>Very rare — high bar seldom met in New England</td>
+      </tr>
+    </tbody>
+  </table>
+  </div>
+
+  <div class="note" style="margin-top:10px;">
+    <strong>Why asset condition investment is distinct:</strong> RTU, PPTU, and METU projects all
+    go through an ISO-NE planning process before costs are socialized. Asset condition projects
+    are TO-initiated and their costs enter the regional RNS rate without an independent
+    pre-construction reliability determination. With asset condition investment accelerating as
+    New England's transmission infrastructure ages, this oversight gap has become a significant
+    concern for state regulators and consumer advocates. The ACR process (below) is the policy
+    response.
+  </div>
+
+  <!-- Section 2: Pipeline Snapshot -->
+  <h2>Project Pipeline Snapshot — October 2025</h2>
+  <p style="font-size:0.87em; color:#444; margin-bottom:12px;">
+    Source: ISO-NE RSP Project List and Asset Condition List Presentation, October 2025.
+    Asset Condition List updated quarterly at
+    <a href="https://www.iso-ne.com/system-planning/system-plans-studies/rsp/rsp-project-list-and-the-asset-condition-list" target="_blank" style="color:#2e7bc4;">iso-ne.com — RSP &amp; ACL</a>.
+  </p>
+
+  <div class="two-col">
+    <div>
+      <h3>RSP Reliability Projects (RTU)</h3>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="callout">
+          <div class="label">Active Major Projects (Oct. 2025)</div>
+          <div class="value">5</div>
+          <div class="sub">SEMA/RI · Greater Boston · NH 2029 · UME 2029 · Boston 2033</div>
+        </div>
+        <div class="callout">
+          <div class="label">Recent In-Service (Oct. 2025 Update)</div>
+          <div class="value">3 placed in-service</div>
+          <div class="sub">No new cancellations; no major cost changes &gt;$5M</div>
+        </div>
+      </div>
+      <p class="note" style="margin-top:10px;">
+        Reliability projects are identified through NEPOOL TC reliability studies and must meet
+        NERC standards. Costs are fully regionalized. Projects above certain cost thresholds
+        may be subject to competitive solicitation under FERC Order 1000.
+      </p>
+    </div>
+
+    <div>
+      <h3>Asset Condition List (ACL)</h3>
+      <div style="display:flex; flex-direction:column; gap:10px;">
+        <div class="callout">
+          <div class="label">New Projects Added (Oct. 2025 Update)</div>
+          <div class="value">21 projects</div>
+          <div class="sub">$228.1M in estimated costs</div>
+        </div>
+        <div class="callout">
+          <div class="label">Placed In-Service (Oct. 2025 Update)</div>
+          <div class="value">12 projects</div>
+          <div class="sub">$442.6M — now entering ratebase</div>
+        </div>
+        <div class="callout">
+          <div class="label">Cancellations (Oct. 2025 Update)</div>
+          <div class="value">None</div>
+          <div class="sub">No ACL cancellations in this period</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <h3 style="margin-top:20px;">Asset Condition List — Key Characteristics</h3>
+  <div class="tbl-wrap">
+  <table>
+    <thead>
+      <tr>
+        <th>Dimension</th>
+        <th>Details (as of Oct. 2025)</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>Primary TO by project volume</td><td>Eversource (largest share by count and cost); also CMP, UI, VELCO, RIE, Versant</td></tr>
+      <tr><td>Typical work types</td><td>Structure replacement; substation relay/equipment upgrades; reconductoring; physical security; flood mitigation</td></tr>
+      <tr><td>Voltage classes represented</td><td>13.8 kV through 345 kV</td></tr>
+      <tr><td>Cost estimate accuracy ranges</td><td>Proposed: −25%/+50%; Planned: ±25%; TCA-approved: ±10%</td></tr>
+      <tr><td>Cost allocation</td><td>Regionalized via RNS — all New England ratepayers share costs once project is in-service</td></tr>
+      <tr><td>Publication frequency</td><td>Quarterly (March, June, October); published as Excel on iso-ne.com</td></tr>
+    </tbody>
+  </table>
+  </div>
+
+  <!-- Section 3: ACR Context -->
+  <h2>Asset Condition Reviewer (ACR) — Process in Development</h2>
+
+  <div class="info-note" style="border-left-color:#c0392b; background:#fff5f5;">
+    <strong>The oversight gap:</strong> Asset condition projects are TO-initiated and their costs
+    are socialized to all New England ratepayers via the regional RNS rate — without a
+    pre-construction independent reliability determination. As New England's transmission
+    infrastructure ages and asset condition investment has accelerated, this lack of independent
+    pre-construction review has become a significant policy concern for state consumer advocates
+    and regulators across the region. The ACR is the negotiated policy response.
+  </div>
+
+  <div class="two-col" style="margin-top:14px;">
+    <div class="chart-box">
+      <h3>What the ACR Will (and Won't) Do</h3>
+      <ul style="font-size:0.88em; line-height:1.85; padding-left:18px; margin:0;">
+        <li>ISO-NE takes an <strong>advisory, non-binding</strong> review role over TO asset condition investment proposals</li>
+        <li>ISO-NE will <em>not</em> make go/no-go decisions; TOs retain final investment authority</li>
+        <li>Provides the first independent technical assessment of project need and scope</li>
+        <li><strong>Interim threshold:</strong> projects with &gt;$25M in regionalized costs subject to interim review (2025–2026)</li>
+        <li><strong>Target permanent implementation:</strong> January 2027</li>
+        <li>ISO-NE 2026 budget allocation: ~$1M</li>
+        <li>ACR will produce a public record of pre-construction review even if non-binding</li>
+      </ul>
+    </div>
+    <div class="chart-box">
+      <h3>Policy and Regulatory Context</h3>
+      <ul style="font-size:0.88em; line-height:1.85; padding-left:18px; margin:0;">
+        <li>The scope of the ACR role — advisory vs. binding — was itself contested in stakeholder negotiations; the advisory-only outcome reflects negotiated limits with the TOs</li>
+        <li>New England consumer advocates (Maine Office of Public Advocate, other NECUCA members) filed a FERC challenge in Jan. 2024 arguing TOs refused to provide investment policy data (Docket ER20-2054)</li>
+        <li>ACR Key Project page:
+          <a href="https://www.iso-ne.com/committees/key-projects/asset-condition-reviewer" target="_blank" style="color:#2e7bc4;">iso-ne.com/…/asset-condition-reviewer</a></li>
+        <li>Quarterly Asset Condition List:
+          <a href="https://www.iso-ne.com/system-planning/system-plans-studies/rsp/rsp-project-list-and-the-asset-condition-list" target="_blank" style="color:#2e7bc4;">iso-ne.com — RSP &amp; ACL</a></li>
+      </ul>
+    </div>
+  </div>
+
+  <p class="note" style="margin-top:14px;">
+    <strong>Current data limitation:</strong> The ACL tracks estimated project costs and status
+    but does not include asset condition severity scores, equipment age, or alternatives analysis.
+    The ACR process is expected to generate more structured project justification data over time.
+    Until then, quantitative analysis of whether asset condition spending is appropriately sized
+    requires TO-specific data requests or FERC rate case discovery.
+  </p>
+
+</div><!-- /tab-invest -->
+
+
 </div><!-- /container -->
 
 <script>
@@ -1257,9 +1717,12 @@ function showTab(id) {
   document.getElementById(id).hidden = false;
   document.querySelector('[data-tab="' + id + '"]').classList.add('active');
   var tabCharts = {
-    'tab-overview': ['pieChart', 'plantBar'],
-    'tab-atrr':     ['atrrBar', 'rnsHistory', 'ccChart'],
-    'tab-detail':   []
+    'tab-overview':   ['pieChart', 'plantBar'],
+    'tab-atrr':       ['atrrBar', 'rnsHistory', 'ccChart'],
+    'tab-detail':     [],
+    'tab-ratepayer':  [],
+    'tab-invest':     [],
+    'tab-glossary':   []
   };
   (tabCharts[id] || []).forEach(function(cid) { if (charts[cid]) charts[cid].resize(); });
 }
